@@ -24,7 +24,7 @@ const generatePictures = (amount) => new Array(amount).fill(``).map((_, idx) => 
   description: ``,
   likes: getRandom(15, 200),
   comment: {
-    avatar: `"img/avatar-` + getRandom(1, AVATARS_AMOUNT) + `.svg",`,
+    avatar: `"img/avatar-${getRandom(1, AVATARS_AMOUNT)}.svg"`,
     message: getRandomFrom(MESSAGES),
     name: getRandomFrom(NAMES)
   }
@@ -40,10 +40,10 @@ const renderPicture = (picture) => {
   return pictureElement;
 };
 
-const renderPictures = (elements) => {
+const renderPictures = (pictures) => {
   const fragment = document.createDocumentFragment();
 
-  elements.map(renderPicture).forEach((element) => fragment.append(element));
+  pictures.map(renderPicture).forEach((element) => fragment.append(element));
 
   return fragment;
 };
