@@ -57,10 +57,7 @@ const renderPicture = (picture) => {
 
   pictureElement.querySelector(`.picture__img`).src = picture.url;
   pictureElement.querySelector(`.picture__likes`).textContent = picture.likes;
-  pictureElement.querySelector(`.picture__comments`).textContent = getRandom(
-      1,
-      COMMENTS_AMOUNT
-  );
+  pictureElement.querySelector(`.picture__comments`).textContent = picture.comments.length;
 
   return pictureElement;
 };
@@ -76,19 +73,6 @@ const renderPictures = (pictures) => {
 const pictures = generatePictures(PICTURES_AMOUNT);
 blockPictures.append(renderPictures(pictures));
 
-
-const renderBigPicture = (picture) => {
-  bigPicture.querySelector(`img`).src = picture.url;
-  bigPicture.querySelector(`img`).alt = picture.description;
-  bigPicture.querySelector(`.social__caption`).textContent = picture.description;
-  bigPicture.querySelector(`.likes-count`).textContent = picture.likes;
-  bigPicture.querySelector(`.comments-count`).textContent = picture.comments.length;
-
-  return bigPicture;
-};
-
-const currentBigPicture = pictures[PICTURES_NUMBER];
-renderBigPicture(currentBigPicture);
 
 const renderComment = (comment) => {
   const commentElement = templateComment.cloneNode(true);
@@ -109,10 +93,24 @@ const renderComments = (comments) => {
   return socialComments;
 };
 
-bigPicture.querySelector(`.big-picture__social`).append(renderComments(currentBigPicture.comments));
-bigPicture.querySelector(`.big-picture__social`).append(bigPicture.querySelector(`.social__footer`));
-bigPicture.classList.remove(`hidden`);
+const currentBigPicture = pictures[PICTURES_NUMBER];
+
+const renderBigPicture = (picture) => {
+  bigPicture.querySelector(`img`).src = picture.url;
+  bigPicture.querySelector(`img`).alt = picture.description;
+  bigPicture.querySelector(`.social__caption`).textContent = picture.description;
+  bigPicture.querySelector(`.likes-count`).textContent = picture.likes;
+  bigPicture.querySelector(`.comments-count`).textContent = picture.comments.length;
+  bigPicture.querySelector(`.big-picture__social`).append(renderComments(currentBigPicture.comments));
+  bigPicture.querySelector(`.big-picture__social`).append(bigPicture.querySelector(`.social__footer`));
+
+  return bigPicture;
+};
+
+renderBigPicture(currentBigPicture);
 
 bigPicture.querySelector(`.comments-loader`).classList.add(`hidden`);
 bigPicture.querySelector(`.social__comment-count`).classList.add(`hidden`);
 document.querySelector(`body`).classList.add(`modal-open`);
+
+bigPicture.classList.remove(`hidden`);
