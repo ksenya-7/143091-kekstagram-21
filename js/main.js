@@ -19,7 +19,14 @@ const NAMES = [
 const PICTURES_AMOUNT = 25;
 const AVATARS_AMOUNT = 6;
 const COMMENTS_AMOUNT = 50;
-// const PICTURES_NUMBER = 0;
+
+const MIN_HASHTAG_LENGTH = 2;
+const MAX_NAME_LENGTH = 20;
+
+const Key = {
+  ESCAPE: `Escape`,
+  ENTER: `Enter`,
+};
 
 const pictureTemplate = document
   .querySelector(`#picture`)
@@ -30,7 +37,20 @@ const bigPicture = document.querySelector(`.big-picture`);
 const socialComments = bigPicture.querySelector(`.social__comments`);
 const socialComment = socialComments.querySelector(`.social__comment`);
 const templateComment = socialComment.cloneNode(true);
-// console.log(socialComments);
+
+const uploadForm = document.querySelector(`.img-upload__form`);
+const uploadFile = uploadForm.querySelector(`#upload-file`);
+const uploadCancel = uploadForm.querySelector(`#upload-cancel`);
+const uploadOverlay = uploadForm.querySelector(`.img-upload__overlay`);
+const uploadPreview = uploadForm.querySelector(`.img-upload__preview`);
+const uploadLevel = uploadOverlay.querySelector(`.img-upload__effect-level`);
+const effectLevelPin = uploadOverlay.querySelector(`.effect-level__pin`);
+const effectLevelValue = uploadOverlay.querySelector(`.effect-level__value`);
+
+const textHashtagsInput = uploadOverlay.querySelector(`.text__hashtags`);
+
+
+const isEscape = (evt) => (evt.key === Key.ESCAPE);
 
 const getRandom = (min, max) =>
   Math.floor(min + Math.random() * (max + 1 - min));
@@ -85,35 +105,24 @@ const renderComment = (comment) => {
   return commentElement;
 };
 
-socialComments.innerHTML = ``;
-// console.log(socialComments);
-
-// const renderComments = (comments) => {
-//   comments.map(renderComment).forEach((element) => socialComments.append(element));
-//   return socialComments;
-// };
-
-
 const renderBigPicture = (picture) => {
-
   bigPicture.querySelector(`img`).src = picture.url;
   bigPicture.querySelector(`img`).alt = picture.description;
   bigPicture.querySelector(`.social__caption`).textContent = picture.description;
   bigPicture.querySelector(`.likes-count`).textContent = picture.likes;
   bigPicture.querySelector(`.comments-count`).textContent = picture.comments.length;
-  bigPicture.querySelector(`.big-picture__social`).append(picture.comments.map(renderComment).forEach((element) => socialComments.append(element)));
 
-  // console.log(socialComments);
+  socialComments.innerHTML = ``;
+  picture.comments.map(renderComment).forEach((element) => socialComments.append(element));
+
   bigPicture.querySelector(`.comments-loader`).classList.add(`hidden`);
   bigPicture.querySelector(`.social__comment-count`).classList.add(`hidden`);
-  // bigPicture.classList.remove(`hidden`);
+  bigPicture.classList.remove(`hidden`);
 
   return bigPicture;
 };
 
 renderBigPicture(pictures[0]);
-
-// console.log(renderBigPicture(pictures[0]));
 
 document.querySelector(`body`).classList.add(`modal-open`);
 
@@ -135,27 +144,17 @@ const closeBigPicture = () => {
 bigPictureCancel.addEventListener(`click`, closeBigPicture);
 document.addEventListener(`keydown`, onBigPictureEscPress);
 
-const uploadForm = document.querySelector(`.img-upload__form`);
-const uploadFile = uploadForm.querySelector(`#upload-file`);
-const uploadCancel = uploadForm.querySelector(`#upload-cancel`);
-const uploadOverlay = uploadForm.querySelector(`.img-upload__overlay`);
-const effectLevelPin = uploadOverlay.querySelector(`.effect-level__pin`);
-const effectChrome = uploadOverlay.querySelector(`.effects__preview--chrome`);
-const effectSepia = uploadOverlay.querySelector(`.effects__preview--sepia`);
-const effectMarvin = uploadOverlay.querySelector(`.effects__preview--marvin`);
-const effectPhobos = uploadOverlay.querySelector(`.effects__preview--phobos`);
-const effectHeat = uploadOverlay.querySelector(`.effects__preview--heat`);
 
-const textHashtagsInput = uploadOverlay.querySelector(`.text__hashtags`);
-
-uploadOverlay.classList.remove(`hidden`);
+const openUploadForm = () => {
+  uploadOverlay.classList.remove(`hidden`);
+};
+uploadFile.addEventListener(`change`, openUploadForm);
 
 const onUploadOverlayEscPress = (evt) => {
-  if (evt.key === `Escape`) {
+  if (isEscape(evt) && evt.target !== textHashtagsInput) {
     evt.preventDefault();
     uploadOverlay.classList.add(`hidden`);
   }
-  uploadFile.value = ``;
 };
 
 const closeUploadOverlay = () => {
@@ -168,41 +167,112 @@ const closeUploadOverlay = () => {
 uploadCancel.addEventListener(`click`, closeUploadOverlay);
 document.addEventListener(`keydown`, onUploadOverlayEscPress);
 
-effectLevelPin.addEventListener(`mouseup`, () => {
-  effectChrome.grayscale = `effectLevelPin.left/100`;
-  effectSepia.sepia = `effectLevelPin.left/100`;
-  effectMarvin.invert = `effectLevelPin.left`;
-  effectPhobos.blur = `1 + effectLevelPin.left/100*2`;
-  effectHeat.filter = `1 + effectLevelPin.left/100*2`;
-});
+uploadLevel.style.display = `none`;
 
-// Обратите внимание, что при переключении фильтра, уровень эффекта должен сразу
-// сбрасываться до начального состояния, т. е. логика по определению уровня насыщенности
-// должна срабатывать не только при «перемещении» слайдера, но и при переключении фильтров.
-// filter: brightness(3);
+let checkedFilter = ``;
 
-const MIN_HASHTAG_LENGTH = 2;
+const filterChangeEffect = (evt) => {
+  uploadPreview.className = `.img-upload__preview`;
+  if (evt.target && evt.target.matches(`input[type="radio"]`)) {
+    if (evt.target.value === `chrome`) {
+      checkedFilter = `chrome`;
+      uploadPreview.classList.add(`effects__preview--chrome`);
+      uploadPreview.style.filter = `grayscale(1)`;
+      uploadLevel.style.display = `block`;
+    } else if (evt.target.value === `sepia`) {
+      checkedFilter = `sepia`;
+      uploadPreview.classList.add(`effects__preview--sepia`);
+      uploadPreview.style.filter = `sepia(1)`;
+      uploadLevel.style.display = `block`;
+    } else if (evt.target.value === `marvin`) {
+      checkedFilter = `marvin`;
+      uploadPreview.classList.add(`effects__preview--marvin`);
+      uploadPreview.style.filter = `invert(100%)`;
+      uploadLevel.style.display = `block`;
+    } else if (evt.target.value === `phobos`) {
+      checkedFilter = `phobos`;
+      uploadPreview.classList.add(`effects__preview--phobos`);
+      uploadPreview.style.filter = `blur(3px)`;
+      uploadLevel.style.display = `block`;
+    } else if (evt.target.value === `heat`) {
+      checkedFilter = `heat`;
+      uploadPreview.classList.add(`effects__preview--heat`);
+      uploadPreview.style.filter = `brightness(3)`;
+      uploadLevel.style.display = `block`;
+    } else if (evt.target.value === `none`) {
+      checkedFilter = `none`;
+      uploadPreview.classList.add(`effects__preview--none`);
+      uploadLevel.style.display = `none`;
+      uploadPreview.style.filter = `none`;
+    }
+  }
+  return checkedFilter;
+};
 
-textHashtagsInput.addEventListener(`input`, function () {
-  const valueLength = textHashtagsInput.value.length;
+const filterChangeEffectLevel = () => {
+  const valueFilter = effectLevelValue.value;
+  effectLevelPin.style.left = `${valueFilter}%`;
+  uploadLevel.querySelector(`.effect-level__depth`).style.width = `${valueFilter}%`;
+
+  if (checkedFilter === `chrome`) {
+    uploadPreview.style.filter = `grayscale(${valueFilter / 100})`;
+  } else if (checkedFilter === `sepia`) {
+    uploadPreview.style.filter = `sepia(${valueFilter / 100})`;
+  } else if (checkedFilter === `marvin`) {
+    uploadPreview.style.filter = `invert(${valueFilter}%)`;
+  } else if (checkedFilter === `phobos`) {
+    uploadPreview.style.filter = `blur(${1 + valueFilter / 100 * 2}px)`;
+  } else if (checkedFilter === `heat`) {
+    uploadPreview.style.filter = `brightness(${1 + valueFilter / 100 * 2})`;
+  } else if (checkedFilter === `none`) {
+    uploadPreview.style.filter = `none`;
+  }
+};
+
+uploadForm.addEventListener(`change`, filterChangeEffect);
+effectLevelPin.addEventListener(`mouseup`, filterChangeEffectLevel);
+
+textHashtagsInput.addEventListener(`input`, () => {
+  const re = /^#\w*$/;
   const hashTag = textHashtagsInput.value;
-  const re = /^[\b#[\w\d]{1,20}\b]?$/i;
-  // /^[[\b#[\w\d]{1,20}\b\s]?]*$/i;
-  // /^[[\b#[\w\d]{1,20}\b]?\s{1}]*$/i;
 
   if (!re.test(hashTag)) {
-    textHashtagsInput.setCustomValidity(`Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д., максимальная длина одного хэш-тега 20 символов, включая решётку.`);
-  } else if (valueLength < MIN_HASHTAG_LENGTH) {
-    textHashtagsInput.setCustomValidity(`Ещё ` + (MIN_HASHTAG_LENGTH - valueLength) + ` симв.`);
-  } else {
+    textHashtagsInput.setCustomValidity(`Хэш-тег начинается с символа # (решётка).`);
+  } else if (hashTag.length < MIN_HASHTAG_LENGTH) {
+    textHashtagsInput.setCustomValidity(`Хэш-тег не может состоять только из одной решётки. Ещё ${MIN_HASHTAG_LENGTH - hashTag.length} симв.`);
+  } else if (!re.test(hashTag)) {
+    textHashtagsInput.setCustomValidity(`Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.`);
+  } else if (hashTag.length > MAX_NAME_LENGTH) {
+    textHashtagsInput.setCustomValidity(`Максимальная длина одного хэш-тега 20 символов, включая решётку. Удалите лишние ${hashTag.length - MAX_NAME_LENGTH} симв.`);
+  } else if (re.test(hashTag)) {
     textHashtagsInput.setCustomValidity(``);
   }
-
   textHashtagsInput.reportValidity();
-  // console.log(re.test(hashTag));
 });
 
-// Если форма заполнена верно, то должна показываться страница сервера, указанная
-// в атрибуте action тега form, с успешно отправленными данными, если же форма пропустила
-// какие-то некорректные значения, то будет показана страница с допущенными ошибками.
-// В идеале у пользователя не должно быть сценария при котором он может отправить некорректную форму.
+uploadForm.addEventListener(`submit`, () => {
+  const re = /^\s*#\w*$/;
+  const hashTag = textHashtagsInput.value;
+  const hashTagArray = hashTag.split(` `);
+
+  const hashTagSet = new Set();
+  for (let element of hashTagArray) {
+    hashTagSet.add(element.toLowerCase());
+  }
+
+  hashTagArray.forEach((element) => {
+    if (!re.test(element)) {
+      textHashtagsInput.setCustomValidity(`Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.`);
+    } else if (element.length > MAX_NAME_LENGTH) {
+      textHashtagsInput.setCustomValidity(`Максимальная длина одного хэш-тега 20 символов, включая решётку. Удалите лишние ${element.length - MAX_NAME_LENGTH}} симв.`);
+    } else if (hashTagSet.has(element.toLowerCase())) {
+      textHashtagsInput.setCustomValidity(`Хэш-теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом. Один и тот же хэш-тег не может быть использован дважды.`);
+    } else if (hashTagArray.length > 5) {
+      textHashtagsInput.setCustomValidity(`Нельзя указать больше пяти хэш-тегов.`);
+    } else if (re.test(element)) {
+      textHashtagsInput.setCustomValidity(``); // тут какое-то подтвеждение, что можно отправлять, видимо
+    }
+  }
+  );
+});
+
