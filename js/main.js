@@ -3,7 +3,15 @@
 (() => {
   const blockPictures = document.querySelector(`.pictures`);
 
-  blockPictures.append(window.picture.renderPictures(window.gallery.pictures));
+  (window.backend.load((pictures) =>{
+    const fragment = document.createDocumentFragment();
 
-  window.preview.renderBigPicture(window.gallery.pictures[0]);
+    pictures.map(window.picture.renderPicture).forEach((element) => fragment.append(element));
+
+    blockPictures.append(fragment);
+  }, () => {}));
+
+  (window.backend.load((pictures) =>{
+    window.preview.renderBigPicture(pictures[0]);
+  }, () => {}));
 })();
