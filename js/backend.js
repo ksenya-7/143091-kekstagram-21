@@ -12,6 +12,7 @@
       switch (xhr.status) {
         case 200:
           onSuccess(xhr.response);
+          // console.log(xhr.response);
           break;
 
         case 400:

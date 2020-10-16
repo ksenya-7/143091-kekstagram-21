@@ -1,17 +1,15 @@
 "use strict";
 
 (() => {
-  const blockPictures = document.querySelector(`.pictures`);
+  // const successHandler = (pictures) => {
+  //   picturesArray = pictures;
+  //   updatePictures(pictures);
+  //   // console.log(picturesArray);
+  // };
 
-  (window.backend.load((pictures) =>{
-    const fragment = document.createDocumentFragment();
+  (window.backend.load(window.filter.successHandler, () => {}));
 
-    pictures.map(window.picture.renderPicture).forEach((element) => fragment.append(element));
-
-    blockPictures.append(fragment);
-  }, () => {}));
-
-  (window.backend.load((pictures) =>{
-    window.preview.renderBigPicture(pictures[0]);
-  }, () => {}));
+  // (window.backend.load((pictures) => {
+  //   window.preview.renderBigPicture(pictures[0]);
+  // }, () => {}));
 })();
