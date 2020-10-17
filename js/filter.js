@@ -9,15 +9,12 @@
   const filtersButtons = filtersForm.querySelectorAll(`.img-filters__button`);
   filters.classList.remove(`img-filters--inactive`);
 
-  let currentButton = filtersForm.querySelector(`#filter-default`);
-  let picturesArray = [];
   let picturesNotChangedArray = [];
 
   // по умолчанию открытие страницы
   (window.backend.load((pictures) => {
     picturesNotChangedArray = pictures;
-    picturesArray = pictures;
-    updatePictures(picturesArray);
+    updatePictures(pictures);
   }, () => {}));
 
   const getRank = (element) => {
@@ -26,16 +23,15 @@
     return rank;
   };
 
-  const getRandomPictures = (pictures, amount) => new Array(amount).fill(``).map(() => (window.util.getRandomFrom(pictures)));
+  const getRandomPictures = (pictures, amount) => (window.util.shuffleArray(pictures)).slice(0, amount - 1);
 
-  const getDiscussedPictures = (pictures) => pictures.sort((left, right) => getRank(right) - getRank(left));
+  const getMostDiscussedPictures = (pictures) => pictures.sort((left, right) => getRank(right) - getRank(left));
 
-
-  // const resultfilterButtons = {
-  //   `filter-default`: picturesArray,
-  //   `filter-random`: getRandomPictures(picturesArray),
-  //   `filter-discussed`: getDiscussedPictures(picturesArray),
-  // };
+  const filtersMap = {
+    'filter-default': () => picturesNotChangedArray,
+    'filter-random': (pictures) => getRandomPictures(pictures, MAX_RANDOM_PICTURES_COUNT),
+    'filter-discussed': (pictures) => getMostDiscussedPictures(pictures)
+  };
 
   const updatePictures = (pictures) => {
 
@@ -57,41 +53,16 @@
   };
 
   const successHandler = (pictures) => {
-    picturesArray = pictures;
-    // console.log(picturesArray);
-
-    filtersButtons[0].addEventListener(`click`, (evt) => {
-      evt.preventDefault();
-      blockPictures.querySelectorAll(`.picture`).forEach((element) => (element.remove()));
-      disactiveButtons(filtersButtons);
-      activeButton(filtersButtons[0]);
-      picturesArray = picturesNotChangedArray;
-      window.debounce.debounce(updatePictures(picturesArray));
-      // console.log(picturesArray);
-    });
-
-    filtersButtons[1].addEventListener(`click`, (evt) => {
-      evt.preventDefault();
-      blockPictures.querySelectorAll(`.picture`).forEach((element) => (element.remove()));
-      disactiveButtons(filtersButtons);
-      activeButton(filtersButtons[1]);
-      picturesArray = pictures;
-      picturesArray = getRandomPictures(picturesArray, MAX_RANDOM_PICTURES_COUNT);
-      window.debounce.debounce(updatePictures(picturesArray));
-      // console.log(picturesArray);
-    });
-
-    filtersButtons[2].addEventListener(`click`, (evt) => {
-      evt.preventDefault();
-      blockPictures.querySelectorAll(`.picture`).forEach((element) => (element.remove()));
-      currentButton = evt.target;
-      disactiveButtons(filtersButtons);
-      activeButton(currentButton);
-      picturesArray = pictures;
-      picturesArray = getDiscussedPictures(picturesArray);
-      window.debounce.debounce(updatePictures(picturesArray));
-      // console.log(picturesArray);
-    });
+    for (let filtersButton of filtersButtons) {
+      const filteredPictures = filtersMap[filtersButton.id](pictures);
+      filtersButton.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        blockPictures.querySelectorAll(`.picture`).forEach((element) => (element.remove()));
+        disactiveButtons(filtersButtons);
+        activeButton(filtersButton);
+        window.debounce.debounce(updatePictures(filteredPictures));
+      });
+    }
   };
 
   window.filter = {

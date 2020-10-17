@@ -14,7 +14,6 @@
 
   const getRandomFrom = (arr) => arr[getRandom(0, arr.length - 1)];
 
-
   const createErrorMessage = (message) => {
     let node = document.createElement(`div`);
     node.style = `z-index: 100; margin: 0 auto; text-align: center;`;
@@ -32,6 +31,7 @@
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
     }
+    return array;
   };
 
   window.util = {
