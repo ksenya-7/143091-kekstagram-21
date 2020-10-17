@@ -84,55 +84,11 @@
 
   const filterChangeEffect = (evt) => {
     uploadPreview.className = `.img-upload__preview`;
-    // console.log(evt.target.value);
     if (evt.target && evt.target.matches(`input[type="radio"]`)) {
-      // for (let uploadInput of uploadInputs) {
       filtersEffectsMap[evt.target.value]();
-      // console.log(filtersEffectsMap[uploadInput.value]);
-
-      // }
     }
-    // console.log(checkedFilter);
     checkedFilter = evt.target.value;
   };
-
-  // const filterChangeEffect = (evt) => {
-  //   uploadPreview.className = `.img-upload__preview`;
-  //   if (evt.target && evt.target.matches(`input[type="radio"]`)) {
-  //     if (evt.target.value === `chrome`) {
-  //       checkedFilter = `chrome`;
-  //       uploadPreview.classList.add(`effects__preview--chrome`);
-  //       uploadPreview.style.filter = `grayscale(1)`;
-  //       uploadLevel.style.display = `block`;
-  //     } else if (evt.target.value === `sepia`) {
-  //       checkedFilter = `sepia`;
-  //       uploadPreview.classList.add(`effects__preview--sepia`);
-  //       uploadPreview.style.filter = `sepia(1)`;
-  //       uploadLevel.style.display = `block`;
-  //     } else if (evt.target.value === `marvin`) {
-  //       checkedFilter = `marvin`;
-  //       uploadPreview.classList.add(`effects__preview--marvin`);
-  //       uploadPreview.style.filter = `invert(100%)`;
-  //       uploadLevel.style.display = `block`;
-  //     } else if (evt.target.value === `phobos`) {
-  //       checkedFilter = `phobos`;
-  //       uploadPreview.classList.add(`effects__preview--phobos`);
-  //       uploadPreview.style.filter = `blur(3px)`;
-  //       uploadLevel.style.display = `block`;
-  //     } else if (evt.target.value === `heat`) {
-  //       checkedFilter = `heat`;
-  //       uploadPreview.classList.add(`effects__preview--heat`);
-  //       uploadPreview.style.filter = `brightness(3)`;
-  //       uploadLevel.style.display = `block`;
-  //     } else if (evt.target.value === `none`) {
-  //       checkedFilter = `none`;
-  //       uploadPreview.classList.add(`effects__preview--none`);
-  //       uploadLevel.style.display = `none`;
-  //       uploadPreview.style.filter = `none`;
-  //     }
-  //   }
-  //   return checkedFilter;
-  // };
 
   const filterChangeEffectLevel = () => {
     const valueFilter = effectLevelValue.value;
