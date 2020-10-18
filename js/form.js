@@ -3,6 +3,7 @@
 (() => {
   const MIN_HASHTAG_LENGTH = 2;
   const MAX_NAME_LENGTH = 20;
+  const MAX_DESCRIPTION_LENGTH = 140;
 
   const uploadForm = document.querySelector(`.img-upload__form`);
   const uploadFile = uploadForm.querySelector(`#upload-file`);
@@ -14,6 +15,7 @@
   const effectLevelValue = uploadOverlay.querySelector(`.effect-level__value`);
 
   const textHashtagsInput = uploadOverlay.querySelector(`.text__hashtags`);
+  const textDescriptionInput = uploadOverlay.querySelector(`.text__description`);
 
   // открытие-закрытие формы
   const openUploadForm = () => {
@@ -22,7 +24,7 @@
   uploadFile.addEventListener(`change`, openUploadForm);
 
   const onUploadOverlayEscPress = (evt) => {
-    if (window.util.isEscape(evt) && evt.target !== textHashtagsInput) {
+    if (window.util.isEscape(evt) && evt.target !== textHashtagsInput && evt.target !== textDescriptionInput) {
       evt.preventDefault();
       uploadOverlay.classList.add(`hidden`);
     }
@@ -158,4 +160,14 @@
     }
     );
   });
+
+  // валидация поля комментариев
+  textDescriptionInput.addEventListener(`input`, () => {
+    const description = textDescriptionInput.value;
+
+    if (description.length > MAX_DESCRIPTION_LENGTH) {
+      textDescriptionInput.setCustomValidity(`Максимальная длина комментария 140 символов. Удалите лишние ${description.length - MAX_DESCRIPTION_LENGTH} симв.`);
+    }
+  });
+
 })();

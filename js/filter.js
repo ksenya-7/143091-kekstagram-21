@@ -15,6 +15,15 @@
   (window.backend.load((pictures) => {
     picturesNotChangedArray = pictures;
     updatePictures(pictures);
+
+    const smallPictures = blockPictures.querySelectorAll(`.picture`);
+    // console.log(smallPictures);
+
+    for (let i = 0; i < smallPictures.length; i++) {
+      smallPictures[i].addEventListener(`click`, () => {
+        window.preview.renderBigPicture(picturesNotChangedArray[i]);
+      });
+    }
   }, () => {}));
 
   const getRank = (element) => {
@@ -23,7 +32,7 @@
     return rank;
   };
 
-  const getRandomPictures = (pictures, amount) => (window.util.shuffleArray(pictures)).slice(0, amount - 1);
+  const getRandomPictures = (pictures, amount) => (window.util.shuffleArray(pictures)).slice(0, amount);
 
   const getMostDiscussedPictures = (pictures) => pictures.sort((left, right) => getRank(right) - getRank(left));
 
@@ -34,7 +43,6 @@
   };
 
   const updatePictures = (pictures) => {
-
     const fragment = document.createDocumentFragment();
 
     pictures.map(window.picture.renderPicture).forEach((element) => fragment.append(element));
@@ -61,11 +69,22 @@
         disactiveButtons(filtersButtons);
         activeButton(filtersButton);
         window.debounce.debounce(updatePictures(filteredPictures));
+        document.querySelector(`body`).classList.remove(`modal-open`);
+        // console.log(filteredPictures);
+        const smallPictures = blockPictures.querySelectorAll(`.picture`);
+        // console.log(smallPictures);
+
+        for (let i = 0; i < smallPictures.length; i++) {
+          smallPictures[i].addEventListener(`click`, () => {
+            window.preview.renderBigPicture(filteredPictures[i]);
+          });
+        }
       });
     }
   };
 
   window.filter = {
-    successHandler
+    successHandler,
+    blockPictures
   };
 })();

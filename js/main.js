@@ -3,7 +3,5 @@
 (() => {
   (window.backend.load(window.filter.successHandler, () => {}));
 
-  // (window.backend.load((pictures) => {
-  //   window.preview.renderBigPicture(pictures[0]);
-  // }, () => {}));
+  // (window.backend.load((pictures) => window.preview.renderBigPicture(pictures[0]), () => {}));
 })();
