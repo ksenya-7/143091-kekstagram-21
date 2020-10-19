@@ -1,7 +1,11 @@
 "use strict";
 
 (() => {
-  const URL = `https://21.javascript.pages.academy/kekstagram/data`;
+  const Url = {
+    URL_DATA: `https://21.javascript.pages.academy/kekstagram/data`,
+    URL: `https://21.javascript.pages.academy/kekstagram/data`,
+  };
+
   const load = (onSuccess, onError) => {
     const xhr = new XMLHttpRequest();
 
@@ -43,7 +47,7 @@
 
     xhr.timeout = 10000; // 10s
 
-    xhr.open(`GET`, URL);
+    xhr.open(`GET`, Url.URL_DATA);
     xhr.send();
   };
 

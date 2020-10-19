@@ -9,10 +9,6 @@
   const uploadFile = uploadForm.querySelector(`#upload-file`);
   const uploadCancel = uploadForm.querySelector(`#upload-cancel`);
   const uploadOverlay = uploadForm.querySelector(`.img-upload__overlay`);
-  const uploadPreview = uploadForm.querySelector(`.img-upload__preview`);
-  const uploadLevel = uploadOverlay.querySelector(`.img-upload__effect-level`);
-  const effectLevelPin = uploadOverlay.querySelector(`.effect-level__pin`);
-  const effectLevelValue = uploadOverlay.querySelector(`.effect-level__value`);
 
   const textHashtagsInput = uploadOverlay.querySelector(`.text__hashtags`);
   const textDescriptionInput = uploadOverlay.querySelector(`.text__description`);
@@ -39,82 +35,6 @@
 
   uploadCancel.addEventListener(`click`, closeUploadOverlay);
   document.addEventListener(`keydown`, onUploadOverlayEscPress);
-
-  // фильтр
-  uploadLevel.style.display = `none`;
-
-  let checkedFilter = ``;
-
-  const filtersEffectsMap = {
-    'none': () => {
-      checkedFilter = `none`;
-      uploadPreview.classList.add(`effects__preview--none`);
-      uploadLevel.style.display = `none`;
-      uploadPreview.style.filter = `none`;
-    },
-    'chrome': () => {
-      checkedFilter = `chrome`;
-      uploadPreview.classList.add(`effects__preview--chrome`);
-      uploadPreview.style.filter = `grayscale(1)`;
-      uploadLevel.style.display = `block`;
-    },
-    'sepia': () => {
-      checkedFilter = `sepia`;
-      uploadPreview.classList.add(`effects__preview--sepia`);
-      uploadPreview.style.filter = `sepia(1)`;
-      uploadLevel.style.display = `block`;
-    },
-    'marvin': () => {
-      checkedFilter = `marvin`;
-      uploadPreview.classList.add(`effects__preview--marvin`);
-      uploadPreview.style.filter = `invert(100%)`;
-      uploadLevel.style.display = `block`;
-    },
-    'phobos': () => {
-      checkedFilter = `phobos`;
-      uploadPreview.classList.add(`effects__preview--phobos`);
-      uploadPreview.style.filter = `blur(3px)`;
-      uploadLevel.style.display = `block`;
-    },
-    'heat': () => {
-      checkedFilter = `heat`;
-      uploadPreview.classList.add(`effects__preview--heat`);
-      uploadPreview.style.filter = `brightness(3)`;
-      uploadLevel.style.display = `block`;
-    },
-  };
-
-  const filterChangeEffect = (evt) => {
-    uploadPreview.className = `.img-upload__preview`;
-    if (evt.target && evt.target.matches(`input[type="radio"]`)) {
-      filtersEffectsMap[evt.target.value]();
-    }
-    checkedFilter = evt.target.value;
-  };
-
-  const filterChangeEffectLevel = () => {
-    const valueFilter = effectLevelValue.value;
-    effectLevelPin.style.left = `${valueFilter}%`;
-    uploadLevel.querySelector(`.effect-level__depth`).style.width = `${valueFilter}%`;
-
-    if (checkedFilter === `chrome`) {
-      uploadPreview.style.filter = `grayscale(${valueFilter / 100})`;
-    } else if (checkedFilter === `sepia`) {
-      uploadPreview.style.filter = `sepia(${valueFilter / 100})`;
-    } else if (checkedFilter === `marvin`) {
-      uploadPreview.style.filter = `invert(${valueFilter}%)`;
-    } else if (checkedFilter === `phobos`) {
-      uploadPreview.style.filter = `blur(${1 + valueFilter / 100 * 2}px)`;
-    } else if (checkedFilter === `heat`) {
-      uploadPreview.style.filter = `brightness(${1 + valueFilter / 100 * 2})`;
-    } else if (checkedFilter === `none`) {
-      uploadPreview.style.filter = `none`;
-    }
-  };
-
-  uploadForm.addEventListener(`change`, filterChangeEffect);
-  effectLevelPin.addEventListener(`mouseup`, filterChangeEffectLevel);
-
 
   // валидация хэш-тега
   textHashtagsInput.addEventListener(`input`, () => {
@@ -169,5 +89,4 @@
       textDescriptionInput.setCustomValidity(`Максимальная длина комментария 140 символов. Удалите лишние ${description.length - MAX_DESCRIPTION_LENGTH} симв.`);
     }
   });
-
 })();
