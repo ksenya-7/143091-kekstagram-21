@@ -70,9 +70,7 @@
         activeButton(filtersButton);
         window.debounce.debounce(updatePictures(filteredPictures));
         document.querySelector(`body`).classList.remove(`modal-open`);
-        // console.log(filteredPictures);
         const smallPictures = blockPictures.querySelectorAll(`.picture`);
-        // console.log(smallPictures);
 
         for (let i = 0; i < smallPictures.length; i++) {
           smallPictures[i].addEventListener(`click`, () => {
