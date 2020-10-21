@@ -9,12 +9,25 @@
   const uploadFile = uploadForm.querySelector(`#upload-file`);
   const uploadCancel = uploadForm.querySelector(`#upload-cancel`);
   const uploadOverlay = uploadForm.querySelector(`.img-upload__overlay`);
+  const inputsRadio = uploadOverlay.querySelectorAll(`input[type="radio"]`);
 
   const textHashtagsInput = uploadOverlay.querySelector(`.text__hashtags`);
   const textDescriptionInput = uploadOverlay.querySelector(`.text__description`);
 
   // открытие-закрытие формы
+  const cancelOldValues = () => {
+    textHashtagsInput.value = ``;
+    textDescriptionInput.value = ``;
+    window.move.filtersEffectsMap[`none`]();
+    window.move.filterValueMap[`none`]();
+    window.move.checkedFilter = `none`;
+    inputsRadio.forEach((el) => {
+      el.classList.remove(`.effects__radio:checked`);
+    });
+  };
+
   const openUploadForm = () => {
+    cancelOldValues();
     uploadOverlay.classList.remove(`hidden`);
   };
   uploadFile.addEventListener(`change`, openUploadForm);
@@ -27,6 +40,7 @@
   };
 
   const closeUploadOverlay = () => {
+    cancelOldValues();
     uploadOverlay.classList.add(`hidden`);
 
     document.removeEventListener(`keydown`, onUploadOverlayEscPress);
@@ -36,7 +50,8 @@
   uploadCancel.addEventListener(`click`, closeUploadOverlay);
   document.addEventListener(`keydown`, onUploadOverlayEscPress);
 
-  // // валидация хэш-тега
+  // валидация
+
   textHashtagsInput.addEventListener(`input`, () => {
     const re = /^#\w*$/;
     const hashTag = textHashtagsInput.value;
@@ -81,7 +96,6 @@
     );
   });
 
-  // // валидация поля комментариев
 
   textDescriptionInput.addEventListener(`input`, () => {
     const description = textDescriptionInput.value;
@@ -97,30 +111,14 @@
       uploadOverlay.classList.add(`hidden`);
     });
     evt.preventDefault();
+    window.successError.openSuccessMessage();
+  });
+
+  uploadForm.addEventListener(`error`, (evt) => {
+    window.backend.save(new FormData(uploadForm), () => {
+      uploadOverlay.classList.add(`hidden`);
+    });
+    evt.preventDefault();
+    window.successError.openErrorMessage();
   });
 })();
-
-// Данные из формы мы также можем передать с помощью AJAX. Допишите
-// в модуль, где мы описывали взаимодействие с сервером, новую функцию
-// для отправки данных из формы.
-
-// Доработайте обработчик отправки формы, который вы делали в задании
-// «Личный проект: доверяй, но проверяй», так чтобы он отменял действие
-// формы по умолчанию и отправлял данные формы посредством XHR на сервер
-// https://21.javascript.pages.academy/kekstagram.
-// После успешной передачи данных на сервер, форма редактирования должна
-// вернуться в исходное состояние, а все данные, введённые в форму,
-// сброситься. Окно с формой должно закрыться.
-// Если отправка данных прошла успешно, показывается соответствующее
-// сообщение. Разметку сообщения, которая находится блоке #success внутри
-// шаблона template, нужно разместить в main. Сообщение должно исчезать
-// после нажатия на кнопку .success__button, по нажатию на клавишу Esc
-// и по клику на произвольную область экрана.
-// Если при отправке данных произошла ошибка запроса, покажите
-// соответствующее сообщение. Разметку сообщения, которая находится
-// блоке #error внутри шаблона template, нужно разместить в main.
-// Сообщение должно исчезать после нажатия на кнопки .error__button,
-// по нажатию на клавишу Esc и по клику на произвольную область экрана.
-// Доработайте обработчик закрытия формы, чтобы кроме закрытия формы
-// он сбрасывал введённые пользователем данные и возвращал форму
-// в исходное состояние.

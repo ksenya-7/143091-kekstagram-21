@@ -6,10 +6,8 @@
   const uploadPreview = uploadOverlay.querySelector(`.img-upload__preview`);
   const uploadLevel = uploadOverlay.querySelector(`.img-upload__effect-level`);
   const effectLevelPin = uploadOverlay.querySelector(`.effect-level__pin`);
-  const effectLevelValue = uploadLevel.querySelector(`input`);
-  // effectLevelValue.value = `50`;
-  // console.log(effectLevelValue);
-  // console.log(effectLevelValue.value);
+  const effectLevelValue = uploadLevel.querySelector(`.effect-level__value`);
+
 
   const filtersEffectsMap = {
     'none': () => {
@@ -59,22 +57,21 @@
     'heat': (valueFilter) => `brightness(${1 + valueFilter / 100 * 2})`,
   };
 
-  uploadLevel.style.display = `none`;
   effectLevelPin.style.cursor = `ew-resize`;
-
+  uploadLevel.style.display = `none`;
   let checkedFilter = `none`;
   let valueFilter = 100;
 
   const effectLevel = (value) => {
     effectLevelPin.style.left = `${value}%`;
     uploadLevel.querySelector(`.effect-level__depth`).style.width = `${value}%`;
-    // effectLevelValue.value = `${value}`;
+    effectLevelValue.value = value;
   };
 
   const filterChangeEffect = (evt) => {
     valueFilter = 100;
     effectLevelValue.value = valueFilter;
-    uploadPreview.className = `.img-upload__preview`;
+    uploadPreview.className = `img-upload__preview effects__preview--none`;
     if (evt.target && evt.target.matches(`input[type="radio"]`)) {
       filtersEffectsMap[evt.target.value]();
       effectLevel(valueFilter);
@@ -126,6 +123,10 @@
   });
 
   window.move = {
-    valueFilter
+    valueFilter,
+    checkedFilter,
+    filtersEffectsMap,
+    filterValueMap,
+    effectLevel
   };
 })();
