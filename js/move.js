@@ -6,8 +6,10 @@
   const uploadPreview = uploadOverlay.querySelector(`.img-upload__preview`);
   const uploadLevel = uploadOverlay.querySelector(`.img-upload__effect-level`);
   const effectLevelPin = uploadOverlay.querySelector(`.effect-level__pin`);
-  const effectLevelValue = uploadOverlay.querySelector(`.effect-level__value`);
-
+  const effectLevelValue = uploadLevel.querySelector(`input`);
+  // effectLevelValue.value = `50`;
+  // console.log(effectLevelValue);
+  // console.log(effectLevelValue.value);
 
   const filtersEffectsMap = {
     'none': () => {
@@ -66,15 +68,17 @@
   const effectLevel = (value) => {
     effectLevelPin.style.left = `${value}%`;
     uploadLevel.querySelector(`.effect-level__depth`).style.width = `${value}%`;
-    effectLevelValue.value = `${value}`;
+    // effectLevelValue.value = `${value}`;
   };
 
   const filterChangeEffect = (evt) => {
     valueFilter = 100;
+    effectLevelValue.value = valueFilter;
     uploadPreview.className = `.img-upload__preview`;
     if (evt.target && evt.target.matches(`input[type="radio"]`)) {
       filtersEffectsMap[evt.target.value]();
       effectLevel(valueFilter);
+      effectLevelValue.value = `${valueFilter}`;
     }
     checkedFilter = evt.target.value;
   };
@@ -109,6 +113,7 @@
     };
 
     const onMouseUp = (upEvt) =>{
+      effectLevel(valueFilter);
       upEvt.preventDefault();
       uploadPreview.style.filter = filterValueMap[checkedFilter](valueFilter);
 
