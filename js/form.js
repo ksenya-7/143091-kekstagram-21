@@ -95,12 +95,4 @@
     evt.preventDefault();
     window.successError.openSuccessMessage();
   });
-
-  uploadForm.addEventListener(`error`, (evt) => {
-    window.backend.save(new FormData(uploadForm), () => {
-      uploadOverlay.classList.add(`hidden`);
-    });
-    evt.preventDefault();
-    window.successError.openErrorMessage();
-  });
 })();

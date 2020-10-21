@@ -59,6 +59,10 @@
       onLoad(xhr.response);
     });
 
+    xhr.addEventListener(`error`, () => {
+      window.successError.openErrorMessage();
+    });
+
     xhr.open(`POST`, Url.URL);
     xhr.send(data);
   };
