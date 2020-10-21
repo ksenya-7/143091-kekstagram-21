@@ -2,14 +2,15 @@
 
 (() => {
   const MIN_HASHTAG_LENGTH = 2;
-  const MAX_NAME_LENGTH = 20;
+  const MAX_HASHTAG_LENGTH = 20;
   const MAX_DESCRIPTION_LENGTH = 140;
 
   const uploadForm = document.querySelector(`.img-upload__form`);
   const uploadFile = uploadForm.querySelector(`#upload-file`);
   const uploadCancel = uploadForm.querySelector(`#upload-cancel`);
   const uploadOverlay = uploadForm.querySelector(`.img-upload__overlay`);
-  const inputsRadio = uploadOverlay.querySelectorAll(`input[type="radio"]`);
+  const effectsPreview = uploadOverlay.querySelectorAll(`.effects__preview`);
+  const effectslLabel = uploadOverlay.querySelectorAll(`.effects__label`);
 
   const textHashtagsInput = uploadOverlay.querySelector(`.text__hashtags`);
   const textDescriptionInput = uploadOverlay.querySelector(`.text__description`);
@@ -21,8 +22,11 @@
     window.move.filtersEffectsMap[`none`]();
     window.move.filterValueMap[`none`]();
     window.move.checkedFilter = `none`;
-    inputsRadio.forEach((el) => {
-      el.classList.remove(`.effects__radio:checked`);
+    effectsPreview.forEach((el) => {
+      el.style.border = `none`;
+    });
+    effectslLabel.forEach((el) => {
+      el.style.color = `white`;
     });
   };
 
@@ -52,24 +56,6 @@
 
   // валидация
 
-  textHashtagsInput.addEventListener(`input`, () => {
-    const re = /^#\w*$/;
-    const hashTag = textHashtagsInput.value;
-
-    if (!re.test(hashTag)) {
-      textHashtagsInput.setCustomValidity(`Хэш-тег начинается с символа # (решётка).`);
-    } else if (hashTag.length < MIN_HASHTAG_LENGTH) {
-      textHashtagsInput.setCustomValidity(`Хэш-тег не может состоять только из одной решётки. Ещё ${MIN_HASHTAG_LENGTH - hashTag.length} симв.`);
-    } else if (!re.test(hashTag)) {
-      textHashtagsInput.setCustomValidity(`Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.`);
-    } else if (hashTag.length > MAX_NAME_LENGTH) {
-      textHashtagsInput.setCustomValidity(`Максимальная длина одного хэш-тега 20 символов, включая решётку. Удалите лишние ${hashTag.length - MAX_NAME_LENGTH} симв.`);
-    } else if (re.test(hashTag)) {
-      textHashtagsInput.setCustomValidity(``);
-    }
-    textHashtagsInput.reportValidity();
-  });
-
   textHashtagsInput.addEventListener(`submit`, () => {
     const re = /^\s*#\w*$/;
     const hashTag = textHashtagsInput.value;
@@ -81,23 +67,19 @@
     }
 
     hashTagArray.forEach((element) => {
-      if (!re.test(element)) {
-        textHashtagsInput.setCustomValidity(`Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.`);
-      } else if (element.length > MAX_NAME_LENGTH) {
-        textHashtagsInput.setCustomValidity(`Максимальная длина одного хэш-тега 20 символов, включая решётку. Удалите лишние ${element.length - MAX_NAME_LENGTH}} симв.`);
-      } else if (hashTagSet.has(element.toLowerCase())) {
-        textHashtagsInput.setCustomValidity(`Хэш-теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом. Один и тот же хэш-тег не может быть использован дважды.`);
-      } else if (hashTagArray.length > 5) {
-        textHashtagsInput.setCustomValidity(`Нельзя указать больше пяти хэш-тегов.`);
-      } else if (re.test(element)) {
-        textHashtagsInput.setCustomValidity(``); // тут какое-то подтвеждение, что можно отправлять, видимо
+      if (!re.test(element) || hashTagSet.has(element.toLowerCase()) || hashTagArray.length > 5) {
+        textHashtagsInput.setCustomValidity(`Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д. Хэш-теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом. Один и тот же хэш-тег не может быть использован дважды. Нельзя указать больше пяти хэш-тегов.`);
+      } else if (element.length < MIN_HASHTAG_LENGTH || element.length > MAX_HASHTAG_LENGTH) {
+        textHashtagsInput.setCustomValidity(`Минимальная длина одного хэш-тега – 2 символа, максимальная длина – 20 символов, включая решётку. Удалите лишние ${element.length - MAX_HASHTAG_LENGTH}} симв.`);
+      } else {
+        textHashtagsInput.setCustomValidity(``);
       }
     }
     );
   });
 
 
-  textDescriptionInput.addEventListener(`input`, () => {
+  textDescriptionInput.addEventListener(`submit`, () => {
     const description = textDescriptionInput.value;
 
     if (description.length > MAX_DESCRIPTION_LENGTH) {
