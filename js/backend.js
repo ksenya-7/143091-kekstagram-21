@@ -3,7 +3,7 @@
 (() => {
   const Url = {
     URL_DATA: `https://21.javascript.pages.academy/kekstagram/data`,
-    URL: `https://21.javascript.pages.academy/kekstagram/data`,
+    URL: `https://21.javascript.pages.academy/kekstagram`,
   };
 
   const load = (onSuccess, onError) => {
@@ -51,7 +51,24 @@
     xhr.send();
   };
 
+  const save = (data, onLoad) => {
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = `json`;
+
+    xhr.addEventListener(`load`, () => {
+      onLoad(xhr.response);
+    });
+
+    xhr.addEventListener(`error`, () => {
+      window.successError.openErrorMessage();
+    });
+
+    xhr.open(`POST`, Url.URL);
+    xhr.send(data);
+  };
+
   window.backend = {
-    load
+    load,
+    save
   };
 })();
