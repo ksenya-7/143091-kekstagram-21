@@ -3,6 +3,7 @@
 (() => {
   const MAX_RANDOM_PICTURES_COUNT = 10;
 
+  const body = document.querySelector(`body`);
   const blockPictures = document.querySelector(`.pictures`);
   const filters = document.querySelector(`.img-filters`);
   const filtersForm = filters.querySelector(`.img-filters__form`);
@@ -17,7 +18,7 @@
     updatePictures(pictures);
 
     const smallPictures = blockPictures.querySelectorAll(`.picture`);
-    // console.log(smallPictures);
+    body.classList.remove(`modal-open`);
 
     for (let i = 0; i < smallPictures.length; i++) {
       smallPictures[i].addEventListener(`click`, () => {
@@ -68,8 +69,8 @@
         blockPictures.querySelectorAll(`.picture`).forEach((element) => (element.remove()));
         disactiveButtons(filtersButtons);
         activeButton(filtersButton);
-        window.debounce.debounce(updatePictures(filteredPictures));
-        document.querySelector(`body`).classList.remove(`modal-open`);
+        window.debounce(updatePictures(filteredPictures));
+        body.classList.remove(`modal-open`);
         const smallPictures = blockPictures.querySelectorAll(`.picture`);
 
         for (let i = 0; i < smallPictures.length; i++) {
@@ -82,7 +83,6 @@
   };
 
   window.filter = {
-    successHandler,
-    blockPictures
+    successHandler
   };
 })();

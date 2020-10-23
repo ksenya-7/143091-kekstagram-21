@@ -4,10 +4,11 @@
   const uploadForm = document.querySelector(`.img-upload__form`);
   const uploadOverlay = document.querySelector(`.img-upload__overlay`);
   const uploadPreview = uploadOverlay.querySelector(`.img-upload__preview`);
+  const effectsPreview = uploadOverlay.querySelectorAll(`.effects__preview`);
+  const effectslLabel = uploadOverlay.querySelectorAll(`.effects__label`);
   const uploadLevel = uploadOverlay.querySelector(`.img-upload__effect-level`);
-  const effectLevelPin = uploadOverlay.querySelector(`.effect-level__pin`);
   const effectLevelValue = uploadLevel.querySelector(`.effect-level__value`);
-
+  const effectLevelPin = uploadOverlay.querySelector(`.effect-level__pin`);
 
   const filtersEffectsMap = {
     'none': () => {
@@ -57,6 +58,15 @@
     'heat': (valueFilter) => `brightness(${1 + valueFilter / 100 * 2})`,
   };
 
+  const numerOfFilterEffect = {
+    'none': 0,
+    'chrome': 1,
+    'sepia': 2,
+    'marvin': 3,
+    'phobos': 4,
+    'heat': 5,
+  };
+
   effectLevelPin.style.cursor = `ew-resize`;
   uploadLevel.style.display = `none`;
   let checkedFilter = `none`;
@@ -72,8 +82,16 @@
     valueFilter = 100;
     effectLevelValue.value = valueFilter;
     uploadPreview.className = `img-upload__preview effects__preview--none`;
+    effectsPreview.forEach((el) => {
+      el.style.border = `none`;
+    });
+    effectslLabel.forEach((el) => {
+      el.style.color = `white`;
+    });
     if (evt.target && evt.target.matches(`input[type="radio"]`)) {
       filtersEffectsMap[evt.target.value]();
+      effectsPreview[numerOfFilterEffect[evt.target.value]].style.border = `#ffe753`;
+      effectslLabel[numerOfFilterEffect[evt.target.value]].style.color = `#ffe753`;
       effectLevel(valueFilter);
       effectLevelValue.value = `${valueFilter}`;
     }
@@ -126,7 +144,6 @@
     valueFilter,
     checkedFilter,
     filtersEffectsMap,
-    filterValueMap,
-    effectLevel
+    filterValueMap
   };
 })();
