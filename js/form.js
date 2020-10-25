@@ -14,7 +14,7 @@ const textDescriptionInput = uploadOverlay.querySelector(`.text__description`);
 
 // открытие-закрытие формы
 const openUploadForm = () => {
-  window.move.cancelOldValues();
+  window.cancelOldValues();
   uploadOverlay.classList.remove(`hidden`);
 };
 uploadFile.addEventListener(`change`, openUploadForm);
@@ -27,7 +27,7 @@ const onUploadOverlayEscPress = (evt) => {
 };
 
 const closeUploadOverlay = () => {
-  window.move.cancelOldValues();
+  window.cancelOldValues();
   uploadOverlay.classList.add(`hidden`);
 
   document.removeEventListener(`keydown`, onUploadOverlayEscPress);

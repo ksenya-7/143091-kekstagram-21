@@ -143,7 +143,7 @@ const cancelOldValues = () => {
   uploadLevel.style.display = `none`;
   document.querySelector(`.text__hashtags`).value = ``;
   document.querySelector(`.text__description`).value = ``;
-  window.move.valueFilter = 100;
+  valueFilter = 100;
   effectsPreview.forEach((el) => {
     el.style.border = `none`;
   });
@@ -155,6 +155,4 @@ const cancelOldValues = () => {
   effectslLabel[0].style.color = `#ffe753`;
 };
 
-window.move = {
-  cancelOldValues
-};
+window.cancelOldValues = cancelOldValues;

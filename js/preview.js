@@ -85,6 +85,4 @@ const renderBigPicture = (picture) => {
   return bigPicture;
 };
 
-window.preview = {
-  renderBigPicture
-};
+window.renderBigPicture = renderBigPicture;

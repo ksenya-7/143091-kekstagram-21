@@ -14,6 +14,4 @@ const renderPicture = (picture) => {
   return pictureElement;
 };
 
-window.picture = {
-  renderPicture
-};
+window.renderPicture = renderPicture;
