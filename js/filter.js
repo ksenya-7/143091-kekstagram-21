@@ -1,88 +1,100 @@
 "use strict";
 
-(() => {
-  const MAX_RANDOM_PICTURES_COUNT = 10;
+const MAX_RANDOM_PICTURES_COUNT = 10;
 
-  const body = document.querySelector(`body`);
-  const blockPictures = document.querySelector(`.pictures`);
-  const filters = document.querySelector(`.img-filters`);
-  const filtersForm = filters.querySelector(`.img-filters__form`);
-  const filtersButtons = filtersForm.querySelectorAll(`.img-filters__button`);
+const body = document.querySelector(`body`);
+const blockPictures = document.querySelector(`.pictures`);
+const filters = document.querySelector(`.img-filters`);
+const filtersButtons = filters.querySelectorAll(`.img-filters__button`);
+
+const getRank = (element) => {
+  let rank = 0;
+  rank += element.comments.length;
+  return rank;
+};
+
+const updatePictures = (elements) => {
+  const fragment = document.createDocumentFragment();
+
+  elements.map(window.renderPicture).forEach((element) => fragment.append(element));
+
+  blockPictures.append(fragment);
+};
+
+const smallPicturesListener = (smallArray, array) => {
+  for (let i = 0; i < smallArray.length; i++) {
+    smallArray[i].addEventListener(`click`, () => {
+      window.renderBigPicture(array[i]);
+    });
+  }
+};
+
+const renderGallery = (elements) => {
+  // console.log(elements);
+  updatePictures(elements);
+  body.classList.remove(`modal-open`);
+  const smallPictures = blockPictures.querySelectorAll(`.picture`);
+  smallPicturesListener(smallPictures, elements);
+};
+
+const showFilters = () => {
   filters.classList.remove(`img-filters--inactive`);
+};
+const getStartPictures = (elements) => elements.slice();
+const getRandomPictures = (elements, amount) => window.util.shuffleArray(elements.slice()).slice(0, amount);
+const getMostDiscussedPictures = (elements) => elements.slice().sort((left, right) => getRank(right) - getRank(left));
 
-  let picturesNotChangedArray = [];
+const filtersMap = {
+  'filter-default': (elements) => {
+    const startPictures = getStartPictures(elements);
+    clearBlockPicturesAndRemoveModalOpen();
+    disactiveButtons(filtersButtons);
+    window.debounce(renderGallery(startPictures));
+  },
+  'filter-random': (elements) => {
+    const randomPictures = getRandomPictures(elements, MAX_RANDOM_PICTURES_COUNT);
+    clearBlockPicturesAndRemoveModalOpen();
+    disactiveButtons(filtersButtons);
+    window.debounce(renderGallery(randomPictures));
+  },
+  'filter-discussed': (elements) => {
+    const mostDiscussedPictures = getMostDiscussedPictures(elements);
+    clearBlockPicturesAndRemoveModalOpen();
+    disactiveButtons(filtersButtons);
+    window.debounce(renderGallery(mostDiscussedPictures));
+  }
+};
 
-  // по умолчанию открытие страницы
-  (window.backend.load((pictures) => {
-    picturesNotChangedArray = pictures;
-    updatePictures(pictures);
+const disactiveButtons = (buttons) => {
+  for (let button of buttons) {
+    button.classList.remove(`img-filters__button--active`);
+  }
+};
 
-    const smallPictures = blockPictures.querySelectorAll(`.picture`);
-    body.classList.remove(`modal-open`);
+const activeButton = (button) => {
+  button.classList.add(`img-filters__button--active`);
+};
 
-    for (let i = 0; i < smallPictures.length; i++) {
-      smallPictures[i].addEventListener(`click`, () => {
-        window.preview.renderBigPicture(picturesNotChangedArray[i]);
-      });
-    }
-  }, () => {}));
+const clearBlockPicturesAndRemoveModalOpen = () => {
+  blockPictures.querySelectorAll(`.picture`).forEach((element) => (element.remove()));
+  body.classList.remove(`modal-open`);
+};
 
-  const getRank = (element) => {
-    let rank = 0;
-    rank += element.comments.length;
-    return rank;
-  };
+const filtersHandler = (pictures) => {
+  for (let filtersButton of filtersButtons) {
+    filtersButton.addEventListener(`click`, (evt) => {
+      filtersMap[evt.target.id](pictures);
+      activeButton(filtersButton);
+    });
+  }
+};
 
-  const getRandomPictures = (pictures, amount) => (window.util.shuffleArray(pictures)).slice(0, amount);
+let picturesArray = [];
+const successHandler = (data) => {
+  picturesArray = data;
+  renderGallery(picturesArray);
+  showFilters();
+  filtersHandler(picturesArray);
+};
 
-  const getMostDiscussedPictures = (pictures) => pictures.sort((left, right) => getRank(right) - getRank(left));
-
-  const filtersMap = {
-    'filter-default': () => picturesNotChangedArray,
-    'filter-random': (pictures) => getRandomPictures(pictures, MAX_RANDOM_PICTURES_COUNT),
-    'filter-discussed': (pictures) => getMostDiscussedPictures(pictures)
-  };
-
-  const updatePictures = (pictures) => {
-    const fragment = document.createDocumentFragment();
-
-    pictures.map(window.picture.renderPicture).forEach((element) => fragment.append(element));
-
-    blockPictures.append(fragment);
-  };
-
-  const disactiveButtons = (buttons) => {
-    for (let button of buttons) {
-      button.classList.remove(`img-filters__button--active`);
-    }
-  };
-
-  const activeButton = (button) => {
-    button.classList.add(`img-filters__button--active`);
-  };
-
-  const successHandler = (pictures) => {
-    for (let filtersButton of filtersButtons) {
-      const filteredPictures = filtersMap[filtersButton.id](pictures);
-      filtersButton.addEventListener(`click`, (evt) => {
-        evt.preventDefault();
-        blockPictures.querySelectorAll(`.picture`).forEach((element) => (element.remove()));
-        disactiveButtons(filtersButtons);
-        activeButton(filtersButton);
-        window.debounce(updatePictures(filteredPictures));
-        body.classList.remove(`modal-open`);
-        const smallPictures = blockPictures.querySelectorAll(`.picture`);
-
-        for (let i = 0; i < smallPictures.length; i++) {
-          smallPictures[i].addEventListener(`click`, () => {
-            window.preview.renderBigPicture(filteredPictures[i]);
-          });
-        }
-      });
-    }
-  };
-
-  window.filter = {
-    successHandler
-  };
-})();
+window.successHandler = successHandler;
