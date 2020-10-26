@@ -8,6 +8,7 @@ module.exports = {
     "./js/preview.js",
     "./js/picture.js",
     "./js/filter.js",
+    "./js/size.js",
     "./js/move.js",
     "./js/success-error.js",
     "./js/form.js",

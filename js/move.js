@@ -138,12 +138,15 @@ effectLevelPin.addEventListener(`mousedown`, (evt) => {
   effectLevelPin.addEventListener(`mouseup`, onMouseUp);
 });
 
+
 const cancelOldValues = () => {
   uploadPreview.style.filter = `none`;
   uploadLevel.style.display = `none`;
   document.querySelector(`.text__hashtags`).value = ``;
   document.querySelector(`.text__description`).value = ``;
   valueFilter = 100;
+  document.querySelector(`.scale__control--value`).setAttribute(`value`, `100%`);
+  uploadPreview.querySelector(`img`).style.transform = `scale(1)`;
   effectsPreview.forEach((el) => {
     el.style.border = `none`;
   });
