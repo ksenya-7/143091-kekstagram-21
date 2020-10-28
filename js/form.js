@@ -2,15 +2,36 @@
 
 const MAX_HASHTAG_LENGTH = 20;
 const MAX_DESCRIPTION_LENGTH = 140;
+const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
 
 const uploadForm = document.querySelector(`.img-upload__form`);
 const uploadFile = uploadForm.querySelector(`#upload-file`);
 const uploadCancel = uploadForm.querySelector(`#upload-cancel`);
 const uploadOverlay = uploadForm.querySelector(`.img-upload__overlay`);
-
-
 const textHashtagsInput = uploadOverlay.querySelector(`.text__hashtags`);
 const textDescriptionInput = uploadOverlay.querySelector(`.text__description`);
+
+const fileChooser = document.querySelector(`.img-upload__start input[type=file]`);
+const preview = document.querySelector(`.img-upload__preview img`);
+
+// загрузка внешнего файла
+let matches = true;
+
+fileChooser.addEventListener(`change`, () => {
+  const file = fileChooser.files[0];
+  const fileName = file.name.toLowerCase();
+  preview.src = ``;
+  matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+  if (matches) {
+    const reader = new FileReader();
+    reader.addEventListener(`load`, () => {
+      preview.src = reader.result;
+    });
+    reader.addEventListener(`error`, window.successError.openErrorMessage);
+    reader.readAsDataURL(file);
+  }
+});
 
 // открытие-закрытие формы
 const openUploadForm = () => {
@@ -42,6 +63,9 @@ const re = /^\s*#*\w*$/;
 const description = textDescriptionInput.value;
 
 uploadForm.addEventListener(`submit`, (evt) => {
+  textHashtagsInput.setCustomValidity(``);
+  textDescriptionInput.setCustomValidity(``);
+
   const hashTag = textHashtagsInput.value;
   const hashTagArray = hashTag.split(` `);
 
@@ -54,23 +78,27 @@ uploadForm.addEventListener(`submit`, (evt) => {
   const isUnvalid = hashTagArray.some((element) => !re.test(element));
   const isLength = hashTagArray.some((element) => element.length > MAX_HASHTAG_LENGTH);
 
+  evt.preventDefault();
   if (isUnvalid || hashTagArray.length > 5) {
     textHashtagsInput.setCustomValidity(`Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д. Нельзя указать больше пяти хэш-тегов.`);
-    evt.preventDefault();
+    textHashtagsInput.style.border = `1px solid red`;
+    window.util.createErrorMessage();
   } else if (isRepeat) {
     textHashtagsInput.setCustomValidity(`Хэш-теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом. Один и тот же хэш-тег не может быть использован дважды.`);
-    evt.preventDefault();
+    textHashtagsInput.style.border = `1px solid red`;
   } else if (isLength) {
     textHashtagsInput.setCustomValidity(`Минимальная длина одного хэш-тега – 2 символа, максимальная длина – 20 символов, включая решётку.`);
-    evt.preventDefault();
+    textHashtagsInput.style.border = `1px solid red`;
   } else if (description.length > MAX_DESCRIPTION_LENGTH) {
     textDescriptionInput.setCustomValidity(`Максимальная длина комментария 140 символов. Удалите лишние ${description.length - MAX_DESCRIPTION_LENGTH} симв.`);
-    evt.preventDefault();
+    textDescriptionInput.style.border = `1px solid red`;
+  } else if (!matches) {
+    uploadOverlay.classList.add(`hidden`);
+    window.successError.openErrorMessage();
   } else {
     window.backend.save(new FormData(uploadForm), () => {
       uploadOverlay.classList.add(`hidden`);
+      window.successError.openSuccessMessage();
     });
-    evt.preventDefault();
-    window.successError.openSuccessMessage();
   }
 });

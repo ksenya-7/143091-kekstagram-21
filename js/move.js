@@ -7,6 +7,7 @@ const uploadLevel = document.querySelector(`.img-upload__effect-level`);
 const effectLevelValue = uploadLevel.querySelector(`.effect-level__value`);
 const effectLevelPin = document.querySelector(`.effect-level__pin`);
 
+
 const filtersEffectsMap = {
   'none': () => {
     checkedFilter = `none`;
@@ -55,7 +56,7 @@ const filterValueMap = {
   'heat': (valueFilter) => `brightness(${1 + valueFilter / 100 * 2})`,
 };
 
-const numerOfFilterEffect = {
+const numberOfFilterEffect = {
   'none': 0,
   'chrome': 1,
   'sepia': 2,
@@ -88,8 +89,8 @@ const filterChangeEffect = (evt) => {
       el.style.color = `white`;
     });
     filtersEffectsMap[evt.target.value]();
-    effectsPreview[numerOfFilterEffect[evt.target.value]].style.border = `#ffe753`;
-    effectslLabel[numerOfFilterEffect[evt.target.value]].style.color = `#ffe753`;
+    effectsPreview[numberOfFilterEffect[evt.target.value]].style.border = `#ffe753`;
+    effectslLabel[numberOfFilterEffect[evt.target.value]].style.color = `#ffe753`;
     effectLevel(valueFilter);
     effectLevelValue.value = `${valueFilter}`;
   }
@@ -116,7 +117,9 @@ effectLevelPin.addEventListener(`mousedown`, (evt) => {
       x: moveEvt.clientX
     };
 
-    valueFilter = (effectLevelPin.offsetLeft - shift.x) / 452.5 * 100;
+    const lineWidth = parseFloat(window.getComputedStyle(document.querySelector(`.effect-level__line`)).width);
+
+    valueFilter = (effectLevelPin.offsetLeft - shift.x) / lineWidth * 100;
     if (valueFilter > 100) {
       valueFilter = 100;
     } else if (valueFilter < 0) {

@@ -50,12 +50,16 @@ const load = (onSuccess, onError) => {
   xhr.send();
 };
 
-const save = (data, onLoad) => {
+const save = (data, onLoad, onError) => {
   const xhr = new XMLHttpRequest();
   xhr.responseType = `json`;
 
   xhr.addEventListener(`load`, () => {
-    onLoad(xhr.response);
+    if (xhr.status === 200) {
+      onLoad(xhr.response);
+    } else {
+      onError(`Статус ответа: ${xhr.status} ${xhr.statusText}`);
+    }
   });
 
   xhr.addEventListener(`error`, () => {

@@ -1,5 +1,9 @@
 'use strict';
 
+
+const MIN_VALUE_FILTER = 25;
+const STEP_VALUE_FILTER = 25;
+const MAX_VALUE_FILTER = 100;
 const uploadScale = document.querySelector(`.img-upload__scale`);
 const smallerControl = uploadScale.querySelector(`.scale__control--smaller`);
 const biggerControl = uploadScale.querySelector(`.scale__control--bigger`);
@@ -7,30 +11,29 @@ const valueControl = uploadScale.querySelector(`.scale__control--value`);
 const bigPreview = document.querySelector(`.img-upload__preview img`);
 
 const valueSize = 100;
-// valueControl.setAttribute(`value`, `${valueSize}%`);
 
 const changeSizeOfBigPreview = (value) => {
   valueControl.setAttribute(`value`, `${value}%`);
-  bigPreview.style.transform = `scale(${value / 100})`;
+  bigPreview.style.transform = `scale(${value / MAX_VALUE_FILTER})`;
 };
 changeSizeOfBigPreview(valueSize);
 
 smallerControl.addEventListener(`click`, () => {
   const currentValueSize = valueControl.value;
-  const newValueSize = parseInt(currentValueSize, 10) - 25;
+  const newValueSize = parseInt(currentValueSize, 10) - STEP_VALUE_FILTER;
 
-  if (newValueSize >= 0) {
+  if (newValueSize >= MIN_VALUE_FILTER) {
     changeSizeOfBigPreview(newValueSize);
   } else {
-    valueControl.setAttribute(`value`, `0%`);
+    valueControl.setAttribute(`value`, `25%`);
   }
 });
 
 biggerControl.addEventListener(`click`, () => {
   const currentValueSize = valueControl.value;
-  const newValueSize = parseInt(currentValueSize, 10) + 25;
+  const newValueSize = parseInt(currentValueSize, 10) + STEP_VALUE_FILTER;
 
-  if (newValueSize <= 100) {
+  if (newValueSize <= MAX_VALUE_FILTER) {
     changeSizeOfBigPreview(newValueSize);
   } else {
     valueControl.setAttribute(`value`, `100%`);

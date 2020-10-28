@@ -30,7 +30,6 @@ const smallPicturesListener = (smallArray, array) => {
 };
 
 const renderGallery = (elements) => {
-  // console.log(elements);
   updatePictures(elements);
   body.classList.remove(`modal-open`);
   const smallPictures = blockPictures.querySelectorAll(`.picture`);
