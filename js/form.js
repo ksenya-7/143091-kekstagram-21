@@ -34,17 +34,14 @@ fileChooser.addEventListener(`change`, () => {
 });
 
 // открытие-закрытие формы
-const openUploadForm = () => {
-  window.cancelOldValues();
-  uploadOverlay.classList.remove(`hidden`);
-};
-uploadFile.addEventListener(`change`, openUploadForm);
-
 const onUploadOverlayEscPress = (evt) => {
   if (window.util.isEscape(evt) && evt.target !== textHashtagsInput && evt.target !== textDescriptionInput) {
     evt.preventDefault();
+    window.cancelOldValues();
     uploadOverlay.classList.add(`hidden`);
   }
+  document.removeEventListener(`keydown`, onUploadOverlayEscPress);
+  uploadCancel.removeEventListener(`click`, closeUploadOverlay);
 };
 
 const closeUploadOverlay = () => {
@@ -52,44 +49,56 @@ const closeUploadOverlay = () => {
   uploadOverlay.classList.add(`hidden`);
 
   document.removeEventListener(`keydown`, onUploadOverlayEscPress);
-  uploadFile.value = ``;
+  uploadCancel.removeEventListener(`click`, closeUploadOverlay);
 };
 
-uploadCancel.addEventListener(`click`, closeUploadOverlay);
-document.addEventListener(`keydown`, onUploadOverlayEscPress);
+uploadFile.addEventListener(`change`, () => {
+  uploadOverlay.classList.remove(`hidden`);
+
+  uploadCancel.addEventListener(`click`, closeUploadOverlay);
+  document.addEventListener(`keydown`, onUploadOverlayEscPress);
+});
 
 // валидация
-const re = /^\s*#*\w*$/;
-const description = textDescriptionInput.value;
+const re = /^\s*#\w*$/;
 
 uploadForm.addEventListener(`submit`, (evt) => {
-  textHashtagsInput.setCustomValidity(``);
-  textDescriptionInput.setCustomValidity(``);
-
   const hashTag = textHashtagsInput.value;
-  const hashTagArray = hashTag.split(` `);
+  const hashTags = hashTag.split(` `);
+  const description = textDescriptionInput.value;
 
   const hashTagSet = new Set();
-  for (let element of hashTagArray) {
+  for (let element of hashTags) {
     hashTagSet.add(element.toLowerCase());
   }
 
-  const isRepeat = hashTagSet.size < hashTagArray.length;
-  const isUnvalid = hashTagArray.some((element) => !re.test(element));
-  const isLength = hashTagArray.some((element) => element.length > MAX_HASHTAG_LENGTH);
+  const isRepeatOfTag = hashTagSet.size < hashTags.length;
+  const isInvalidOfTag = textHashtagsInput.value === `` ? false : hashTags.some((element) => !re.test(element));
+  const isLengthOfTag = hashTags.some((element) => element.length > MAX_HASHTAG_LENGTH);
+  const isLengthOfDescription = description.length > MAX_DESCRIPTION_LENGTH ? true : false;
+
+  const listenChangesOfForm = () => {
+    textHashtagsInput.setCustomValidity(``);
+    textDescriptionInput.setCustomValidity(``);
+    textHashtagsInput.style.border = `none`;
+    textDescriptionInput.style.border = `none`;
+    textHashtagsInput.reportValidity();
+    textDescriptionInput.reportValidity();
+  };
+
+  uploadForm.addEventListener(`keydown`, listenChangesOfForm);
 
   evt.preventDefault();
-  if (isUnvalid || hashTagArray.length > 5) {
+  if (isInvalidOfTag || hashTags.length > 5) {
     textHashtagsInput.setCustomValidity(`Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д. Нельзя указать больше пяти хэш-тегов.`);
     textHashtagsInput.style.border = `1px solid red`;
-    window.util.createErrorMessage();
-  } else if (isRepeat) {
+  } else if (isRepeatOfTag) {
     textHashtagsInput.setCustomValidity(`Хэш-теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом. Один и тот же хэш-тег не может быть использован дважды.`);
     textHashtagsInput.style.border = `1px solid red`;
-  } else if (isLength) {
+  } else if (isLengthOfTag) {
     textHashtagsInput.setCustomValidity(`Минимальная длина одного хэш-тега – 2 символа, максимальная длина – 20 символов, включая решётку.`);
     textHashtagsInput.style.border = `1px solid red`;
-  } else if (description.length > MAX_DESCRIPTION_LENGTH) {
+  } else if (isLengthOfDescription) {
     textDescriptionInput.setCustomValidity(`Максимальная длина комментария 140 символов. Удалите лишние ${description.length - MAX_DESCRIPTION_LENGTH} симв.`);
     textDescriptionInput.style.border = `1px solid red`;
   } else if (!matches) {
@@ -98,7 +107,9 @@ uploadForm.addEventListener(`submit`, (evt) => {
   } else {
     window.backend.save(new FormData(uploadForm), () => {
       uploadOverlay.classList.add(`hidden`);
+      window.cancelOldValues();
       window.successError.openSuccessMessage();
     });
   }
+  uploadForm.reportValidity();
 });

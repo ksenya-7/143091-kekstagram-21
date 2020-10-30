@@ -134,15 +134,18 @@ effectLevelPin.addEventListener(`mousedown`, (evt) => {
     uploadPreview.style.filter = filterValueMap[checkedFilter](valueFilter);
 
     effectLevelPin.removeEventListener(`mousemove`, onMouseMove);
-    effectLevelPin.removeEventListener(`mouseup`, onMouseUp);
+    document.removeEventListener(`mouseup`, onMouseUp);
   };
 
   effectLevelPin.addEventListener(`mousemove`, onMouseMove);
-  effectLevelPin.addEventListener(`mouseup`, onMouseUp);
+  document.addEventListener(`mouseup`, onMouseUp);
 });
 
 
 const cancelOldValues = () => {
+  document.querySelector(`.text__hashtags`).style.border = `none`;
+  document.querySelector(`.text__description`).style.border = `none`;
+  document.querySelector(`#upload-file`).value = ``;
   uploadPreview.style.filter = `none`;
   uploadLevel.style.display = `none`;
   document.querySelector(`.text__hashtags`).value = ``;

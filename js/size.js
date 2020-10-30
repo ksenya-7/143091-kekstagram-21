@@ -1,6 +1,5 @@
 'use strict';
 
-
 const MIN_VALUE_FILTER = 25;
 const STEP_VALUE_FILTER = 25;
 const MAX_VALUE_FILTER = 100;
@@ -10,13 +9,11 @@ const biggerControl = uploadScale.querySelector(`.scale__control--bigger`);
 const valueControl = uploadScale.querySelector(`.scale__control--value`);
 const bigPreview = document.querySelector(`.img-upload__preview img`);
 
-const valueSize = 100;
-
 const changeSizeOfBigPreview = (value) => {
   valueControl.setAttribute(`value`, `${value}%`);
   bigPreview.style.transform = `scale(${value / MAX_VALUE_FILTER})`;
 };
-changeSizeOfBigPreview(valueSize);
+changeSizeOfBigPreview(MAX_VALUE_FILTER);
 
 smallerControl.addEventListener(`click`, () => {
   const currentValueSize = valueControl.value;

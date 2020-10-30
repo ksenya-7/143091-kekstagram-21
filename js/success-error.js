@@ -11,6 +11,7 @@ const errorTemplate = document
 .content.querySelector(`.error`);
 const errorElement = errorTemplate.cloneNode(true);
 const errorButton = errorElement.querySelector(`.error__button`);
+const errorText = errorElement.querySelector(`.error__title`);
 
 const addElementAndListener = (element, elementButton, cbClose, cbEsc, cbClick) => {
   main.append(element);
@@ -18,6 +19,7 @@ const addElementAndListener = (element, elementButton, cbClose, cbEsc, cbClick) 
   document.addEventListener(`keydown`, cbEsc);
   document.addEventListener(`click`, cbClick);
 };
+
 const removeElementAndListener = (element, cbEsc, cbClick) => {
   element.remove();
   document.removeEventListener(`keydown`, cbEsc);
@@ -59,7 +61,21 @@ const onErrorMessageClick = (evt) => {
   removeElementAndListener(errorElement, onErrorMessageEscPress, onErrorMessageClick);
 };
 
+
+const addElementWithNewTextAndListener = (message, element, elementButton, cbClose, cbEsc, cbClick) => {
+  errorText.textContent = message;
+  main.append(element);
+  elementButton.addEventListener(`click`, cbClose);
+  document.addEventListener(`keydown`, cbEsc);
+  document.addEventListener(`click`, cbClick);
+};
+
+const openCreatedErrorMessage = (message) => {
+  addElementWithNewTextAndListener(message, errorElement, errorButton, closeErrorMessage, onErrorMessageEscPress, onErrorMessageClick);
+};
+
 window.successError = {
   openSuccessMessage,
+  openCreatedErrorMessage,
   openErrorMessage
 };

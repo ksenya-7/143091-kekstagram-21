@@ -21,9 +21,9 @@ const updatePictures = (elements) => {
   blockPictures.append(fragment);
 };
 
-const smallPicturesListener = (smallArray, array) => {
-  for (let i = 0; i < smallArray.length; i++) {
-    smallArray[i].addEventListener(`click`, () => {
+const listenSmallPictures = (smallPictures, array) => {
+  for (let i = 0; i < smallPictures.length; i++) {
+    smallPictures[i].addEventListener(`click`, () => {
       window.renderBigPicture(array[i]);
     });
   }
@@ -33,14 +33,14 @@ const renderGallery = (elements) => {
   updatePictures(elements);
   body.classList.remove(`modal-open`);
   const smallPictures = blockPictures.querySelectorAll(`.picture`);
-  smallPicturesListener(smallPictures, elements);
+  listenSmallPictures(smallPictures, elements);
 };
 
 const showFilters = () => {
   filters.classList.remove(`img-filters--inactive`);
 };
 const getStartPictures = (elements) => elements.slice();
-const getRandomPictures = (elements, amount) => window.util.shuffleArray(elements.slice()).slice(0, amount);
+const getRandomPictures = (elements, amount) => window.util.shuffleElements(elements.slice()).slice(0, amount);
 const getMostDiscussedPictures = (elements) => elements.slice().sort((left, right) => getRank(right) - getRank(left));
 
 const filtersMap = {
