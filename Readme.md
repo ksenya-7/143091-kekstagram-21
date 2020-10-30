@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 - Студент: [Оксана Кужель](https://up.htmlacademy.ru/javascript/21/user/143091).
-- Наставник: [Даниил Царёв](https://htmlacademy.ru/profile/id945835).
+- Наставник: [Магомед Кандаев](https://htmlacademy.ru/profile/magomedkandaev).
 
 ---
 

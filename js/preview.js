@@ -33,7 +33,7 @@ const renderBigPicture = (picture) => {
   let commentsArray = [];
   commentsArray = picture.comments;
 
-  const visibleComments = (quantity, elements) => {
+  const renderComments = (quantity, elements) => {
     for (let i = 0; i < quantity; i++) {
       elements[i].classList.remove(`hidden`);
     }
@@ -41,24 +41,24 @@ const renderBigPicture = (picture) => {
   const newComments = socialComments.querySelectorAll(`.social__comment`);
   let countVisibleComments = 5;
 
-  const loaderComments = (quantity, array, newArray) => {
+  const getComments = (quantity, array, newArray) => {
     if (quantity < array.length) {
-      visibleComments(quantity, newArray);
+      renderComments(quantity, newArray);
       commentsLoader.classList.remove(`hidden`);
     } else {
-      visibleComments(array.length, newArray);
+      renderComments(array.length, newArray);
       commentsLoader.classList.add(`hidden`);
     }
   };
 
-  loaderComments(countVisibleComments, newComments, newComments);
+  getComments(countVisibleComments, newComments, newComments);
 
-  const loaderMoreComments = () => {
+  const getMoreComments = () => {
     countVisibleComments = countVisibleComments + 5;
-    loaderComments(countVisibleComments, commentsArray, newComments);
+    getComments(countVisibleComments, commentsArray, newComments);
   };
 
-  commentsLoader.addEventListener(`click`, loaderMoreComments);
+  commentsLoader.addEventListener(`click`, getMoreComments);
 
   bigPicture.querySelector(`.social__comment-count`).classList.add(`hidden`);
 

@@ -1,3 +1,3 @@
 "use strict";
 
-window.backend.load(window.successHandler, window.util.createErrorMessage);
+window.backend.load(window.successHandler, window.successError.openCreatedErrorMessage);
