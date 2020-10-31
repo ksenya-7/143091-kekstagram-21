@@ -1,6 +1,7 @@
 "use strict";
 
 const MAX_HASHTAG_LENGTH = 20;
+const MIN_HASHTAG_LENGTH = 20;
 const MAX_DESCRIPTION_LENGTH = 140;
 const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
 
@@ -74,14 +75,15 @@ uploadForm.addEventListener(`submit`, (evt) => {
 
   const isRepeatOfTag = hashTagSet.size < hashTags.length;
   const isInvalidOfTag = textHashtagsInput.value === `` ? false : hashTags.some((element) => !re.test(element));
-  const isLengthOfTag = hashTags.some((element) => element.length > MAX_HASHTAG_LENGTH);
+  const isMinLengthOfTag = hashTags.some((element) => element.length > MAX_HASHTAG_LENGTH);
+  const isMaxLengthOfTag = hashTags.some((element) => element.length < MIN_HASHTAG_LENGTH);
   const isLengthOfDescription = description.length > MAX_DESCRIPTION_LENGTH ? true : false;
 
   const listenChangesOfForm = () => {
     textHashtagsInput.setCustomValidity(``);
     textDescriptionInput.setCustomValidity(``);
-    textHashtagsInput.style.border = `none`;
-    textDescriptionInput.style.border = `none`;
+    textHashtagsInput.style.outline = `none`;
+    textDescriptionInput.style.outline = `none`;
     textHashtagsInput.reportValidity();
     textDescriptionInput.reportValidity();
   };
@@ -91,16 +93,16 @@ uploadForm.addEventListener(`submit`, (evt) => {
   evt.preventDefault();
   if (isInvalidOfTag || hashTags.length > 5) {
     textHashtagsInput.setCustomValidity(`Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д. Нельзя указать больше пяти хэш-тегов.`);
-    textHashtagsInput.style.border = `1px solid red`;
+    textHashtagsInput.style.outline = `2px solid red`;
   } else if (isRepeatOfTag) {
     textHashtagsInput.setCustomValidity(`Хэш-теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом. Один и тот же хэш-тег не может быть использован дважды.`);
-    textHashtagsInput.style.border = `1px solid red`;
-  } else if (isLengthOfTag) {
+    textHashtagsInput.style.outline = `2px solid red`;
+  } else if (isMinLengthOfTag || isMaxLengthOfTag) {
     textHashtagsInput.setCustomValidity(`Минимальная длина одного хэш-тега – 2 символа, максимальная длина – 20 символов, включая решётку.`);
-    textHashtagsInput.style.border = `1px solid red`;
+    textHashtagsInput.style.outline = `2px solid red`;
   } else if (isLengthOfDescription) {
     textDescriptionInput.setCustomValidity(`Максимальная длина комментария 140 символов. Удалите лишние ${description.length - MAX_DESCRIPTION_LENGTH} симв.`);
-    textDescriptionInput.style.border = `1px solid red`;
+    textDescriptionInput.style.outline = `2px solid red`;
   } else if (!matches) {
     uploadOverlay.classList.add(`hidden`);
     window.successError.openErrorMessage();

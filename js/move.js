@@ -143,8 +143,8 @@ effectLevelPin.addEventListener(`mousedown`, (evt) => {
 
 
 const cancelOldValues = () => {
-  document.querySelector(`.text__hashtags`).style.border = `none`;
-  document.querySelector(`.text__description`).style.border = `none`;
+  document.querySelector(`.text__hashtags`).style.outline = `none`;
+  document.querySelector(`.text__description`).style.outline = `none`;
   document.querySelector(`#upload-file`).value = ``;
   uploadPreview.style.filter = `none`;
   uploadLevel.style.display = `none`;
