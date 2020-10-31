@@ -4,7 +4,7 @@ const Url = {
   URL_DATA: `https://21.javascript.pages.academy/kekstagram/data`,
   URL: `https://21.javascript.pages.academy/kekstagram`,
 };
-const statusError = {
+const StatusError = {
   400: `Неверный запрос`,
   401: `Пользователь не авторизован`,
   404: `Ничего не найдено`,
@@ -16,7 +16,7 @@ const onXhrLoad = (xhr, onLoad, onError) => () => {
     case 200:
       onLoad(xhr.response);
       break;
-    case (xhr.status) : error = statusError[xhr.status];
+    case (xhr.status) : error = StatusError[xhr.status];
       break;
     default:
       error = `Cтатус ответа: : ` + xhr.status + ` ` + xhr.statusText;
