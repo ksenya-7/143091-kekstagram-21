@@ -56,7 +56,7 @@ const filterValueMap = {
   'heat': (valueFilter) => `brightness(${1 + valueFilter / 100 * 2})`,
 };
 
-const numberOfFilterEffect = {
+const NumberOfFilterEffect = {
   'none': 0,
   'chrome': 1,
   'sepia': 2,
@@ -89,8 +89,8 @@ const filterChangeEffect = (evt) => {
       el.style.color = `white`;
     });
     filtersEffectsMap[evt.target.value]();
-    effectsPreview[numberOfFilterEffect[evt.target.value]].style.border = `#ffe753`;
-    effectslLabel[numberOfFilterEffect[evt.target.value]].style.color = `#ffe753`;
+    effectsPreview[NumberOfFilterEffect[evt.target.value]].style.border = `#ffe753`;
+    effectslLabel[NumberOfFilterEffect[evt.target.value]].style.color = `#ffe753`;
     effectLevel(valueFilter);
     effectLevelValue.value = `${valueFilter}`;
   }
