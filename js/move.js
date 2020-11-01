@@ -133,11 +133,11 @@ effectLevelPin.addEventListener(`mousedown`, (evt) => {
     upEvt.preventDefault();
     uploadPreview.style.filter = filterValueMap[checkedFilter](valueFilter);
 
-    effectLevelPin.removeEventListener(`mousemove`, onMouseMove);
+    document.removeEventListener(`mousemove`, onMouseMove);
     document.removeEventListener(`mouseup`, onMouseUp);
   };
 
-  effectLevelPin.addEventListener(`mousemove`, onMouseMove);
+  document.addEventListener(`mousemove`, onMouseMove);
   document.addEventListener(`mouseup`, onMouseUp);
 });
 

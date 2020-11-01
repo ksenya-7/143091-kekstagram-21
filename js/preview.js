@@ -30,8 +30,8 @@ const renderBigPicture = (picture) => {
   picture.comments.map(renderComment).forEach((element) => socialComments.append(element));
 
   commentsLoader.classList.remove(`hidden`);
-  let commentsArray = [];
-  commentsArray = picture.comments;
+  let commentsElements = [];
+  commentsElements = picture.comments;
 
   const renderComments = (quantity, elements) => {
     for (let i = 0; i < quantity; i++) {
@@ -41,12 +41,12 @@ const renderBigPicture = (picture) => {
   const newComments = socialComments.querySelectorAll(`.social__comment`);
   let countVisibleComments = 5;
 
-  const getComments = (quantity, array, newArray) => {
-    if (quantity < array.length) {
-      renderComments(quantity, newArray);
+  const getComments = (quantity, elements, newElements) => {
+    if (quantity < elements.length) {
+      renderComments(quantity, newElements);
       commentsLoader.classList.remove(`hidden`);
     } else {
-      renderComments(array.length, newArray);
+      renderComments(elements.length, newElements);
       commentsLoader.classList.add(`hidden`);
     }
   };
@@ -55,7 +55,7 @@ const renderBigPicture = (picture) => {
 
   const getMoreComments = () => {
     countVisibleComments = countVisibleComments + 5;
-    getComments(countVisibleComments, commentsArray, newComments);
+    getComments(countVisibleComments, commentsElements, newComments);
   };
 
   commentsLoader.addEventListener(`click`, getMoreComments);

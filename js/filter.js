@@ -21,10 +21,10 @@ const updatePictures = (elements) => {
   blockPictures.append(fragment);
 };
 
-const listenSmallPictures = (smallPictures, array) => {
+const listenSmallPictures = (smallPictures, elements) => {
   for (let i = 0; i < smallPictures.length; i++) {
     smallPictures[i].addEventListener(`click`, () => {
-      window.renderBigPicture(array[i]);
+      window.renderBigPicture(elements[i]);
     });
   }
 };
@@ -42,25 +42,26 @@ const showFilters = () => {
 const getStartPictures = (elements) => elements.slice();
 const getRandomPictures = (elements, amount) => window.util.shuffleElements(elements.slice()).slice(0, amount);
 const getMostDiscussedPictures = (elements) => elements.slice().sort((left, right) => getRank(right) - getRank(left));
+const debouncedRenderGallery = (elements) => window.debounce(renderGallery(elements));
 
 const filtersMap = {
   'filter-default': (elements) => {
     const startPictures = getStartPictures(elements);
     clearBlockPicturesAndRemoveModalOpen();
     disactiveButtons(filtersButtons);
-    window.debounce(renderGallery(startPictures));
+    debouncedRenderGallery(startPictures);
   },
   'filter-random': (elements) => {
     const randomPictures = getRandomPictures(elements, MAX_RANDOM_PICTURES_COUNT);
     clearBlockPicturesAndRemoveModalOpen();
     disactiveButtons(filtersButtons);
-    window.debounce(renderGallery(randomPictures));
+    debouncedRenderGallery(randomPictures);
   },
   'filter-discussed': (elements) => {
     const mostDiscussedPictures = getMostDiscussedPictures(elements);
     clearBlockPicturesAndRemoveModalOpen();
     disactiveButtons(filtersButtons);
-    window.debounce(renderGallery(mostDiscussedPictures));
+    debouncedRenderGallery(mostDiscussedPictures);
   }
 };
 
@@ -88,12 +89,12 @@ const filtersHandler = (pictures) => {
   }
 };
 
-let picturesArray = [];
+let loadPictures = [];
 const successHandler = (data) => {
-  picturesArray = data;
-  renderGallery(picturesArray);
+  loadPictures = data;
+  renderGallery(loadPictures);
   showFilters();
-  filtersHandler(picturesArray);
+  filtersHandler(loadPictures);
 };
 
 window.successHandler = successHandler;
