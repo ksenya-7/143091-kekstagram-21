@@ -42,7 +42,7 @@ const showFilters = () => {
 const getStartPictures = (elements) => elements.slice();
 const getRandomPictures = (elements, amount) => window.util.shuffleElements(elements.slice()).slice(0, amount);
 const getMostDiscussedPictures = (elements) => elements.slice().sort((left, right) => getRank(right) - getRank(left));
-const debouncedRenderGallery = (elements) => window.debounce(renderGallery(elements));
+const debouncedRenderGallery = window.debounce(renderGallery);
 
 const filtersMap = {
   'filter-default': (elements) => {
