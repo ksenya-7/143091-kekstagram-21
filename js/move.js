@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
 const uploadPreview = document.querySelector(`.img-upload__preview`);
 const effectsPreview = document.querySelectorAll(`.effects__preview`);
-const effectslLabel = document.querySelectorAll(`.effects__label`);
+const effectsLabel = document.querySelectorAll(`.effects__label`);
 const uploadLevel = document.querySelector(`.img-upload__effect-level`);
 const effectLevelValue = uploadLevel.querySelector(`.effect-level__value`);
 const effectLevelPin = document.querySelector(`.effect-level__pin`);
@@ -85,12 +85,12 @@ const filterChangeEffect = (evt) => {
     effectsPreview.forEach((el) => {
       el.style.border = `none`;
     });
-    effectslLabel.forEach((el) => {
+    effectsLabel.forEach((el) => {
       el.style.color = `white`;
     });
     filtersEffectsMap[evt.target.value]();
     effectsPreview[NumberOfFilterEffect[evt.target.value]].style.border = `#ffe753`;
-    effectslLabel[NumberOfFilterEffect[evt.target.value]].style.color = `#ffe753`;
+    effectsLabel[NumberOfFilterEffect[evt.target.value]].style.color = `#ffe753`;
     effectLevel(valueFilter);
     effectLevelValue.value = `${valueFilter}`;
   }
@@ -156,12 +156,12 @@ const cancelOldValues = () => {
   effectsPreview.forEach((el) => {
     el.style.border = `none`;
   });
-  effectslLabel.forEach((el) => {
+  effectsLabel.forEach((el) => {
     el.style.color = `white`;
   });
 
   effectsPreview[0].style.border = `#ffe753`;
-  effectslLabel[0].style.color = `#ffe753`;
+  effectsLabel[0].style.color = `#ffe753`;
 };
 
 window.cancelOldValues = cancelOldValues;

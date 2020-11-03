@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const bigPicture = document.querySelector(`.big-picture`);
 const commentsLoader = bigPicture.querySelector(`.comments-loader`);

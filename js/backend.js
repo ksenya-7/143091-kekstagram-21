@@ -1,9 +1,13 @@
-"use strict";
+'use strict';
+
+const SUCCESS_REQUEST = 200;
+const TIMEOUT = 5000;
 
 const Url = {
   URL_DATA: `https://21.javascript.pages.academy/kekstagram/data`,
   URL: `https://21.javascript.pages.academy/kekstagram`,
 };
+
 const StatusError = {
   400: `Неверный запрос`,
   401: `Пользователь не авторизован`,
@@ -13,7 +17,7 @@ const StatusError = {
 const onXhrLoad = (xhr, onLoad, onError) => () => {
   let error;
   switch (xhr.status) {
-    case 200:
+    case SUCCESS_REQUEST:
       onLoad(xhr.response);
       break;
     case (xhr.status) : error = StatusError[xhr.status];
@@ -27,38 +31,32 @@ const onXhrLoad = (xhr, onLoad, onError) => () => {
   }
 };
 
-const load = (onLoad, onError) => {
+const loadOrSaveXhr = (method, onLoad, onError, url, data) => {
   const xhr = new XMLHttpRequest();
   xhr.responseType = `json`;
 
   xhr.addEventListener(`load`, onXhrLoad(xhr, onLoad, onError));
 
-  xhr.addEventListener(`error`, () => {
-    onError(`Произошла ошибка соединения`);
-  });
+  xhr.timeout = TIMEOUT;
 
   xhr.addEventListener(`timeout`, () => {
     onError(`Запрос не успел выполниться за ` + xhr.timeout + `мс`);
   });
 
-  xhr.timeout = 1000; // 1s
-
-  xhr.open(`GET`, Url.URL_DATA);
-  xhr.send();
-};
-
-const save = (data, onLoad, onError) => {
-  const xhr = new XMLHttpRequest();
-  xhr.responseType = `json`;
-
-  xhr.addEventListener(`load`, onXhrLoad(xhr, onLoad, onError));
-
   xhr.addEventListener(`error`, () => {
     window.successError.openErrorMessage();
   });
 
-  xhr.open(`POST`, Url.URL);
+  xhr.open(method, url);
   xhr.send(data);
+};
+
+const load = (onLoad, onError) => {
+  loadOrSaveXhr(`GET`, onLoad, onError, Url.URL_DATA);
+};
+
+const save = (data, onLoad, onError) => {
+  loadOrSaveXhr(`POST`, onLoad, onError, Url.URL, data);
 };
 
 window.backend = {

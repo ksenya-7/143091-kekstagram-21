@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const MAX_RANDOM_PICTURES_COUNT = 10;
 
