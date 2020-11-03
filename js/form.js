@@ -1,7 +1,8 @@
-"use strict";
+'use strict';
 
 const MIN_HASHTAG_LENGTH = 2;
 const MAX_HASHTAG_LENGTH = 20;
+const MAX_HASHTAG_QUANTITY = 5;
 const MAX_DESCRIPTION_LENGTH = 140;
 const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
 
@@ -77,7 +78,7 @@ textHashtagsInput.addEventListener(`input`, (evt) => {
   const isMinLengthOfTag = hashTag === `` ? false : hashTags.some((element) => element.length < MIN_HASHTAG_LENGTH);
 
   evt.preventDefault();
-  if (isInvalidOfTag || hashTags.length > 5) {
+  if (isInvalidOfTag || hashTags.length > MAX_HASHTAG_QUANTITY) {
     textHashtagsInput.style.outline = `2px solid red`;
     textHashtagsInput.setCustomValidity(`Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д. Нельзя указать больше пяти хэш-тегов.`);
   } else if (isRepeatOfTag) {
@@ -96,7 +97,7 @@ textHashtagsInput.addEventListener(`input`, (evt) => {
 
 textDescriptionInput.addEventListener(`input`, (evt) => {
   const description = textDescriptionInput.value;
-  const isLengthOfDescription = description.length > MAX_DESCRIPTION_LENGTH ? true : false;
+  const isLengthOfDescription = description.length > MAX_DESCRIPTION_LENGTH;
   evt.preventDefault();
   if (isLengthOfDescription) {
     textDescriptionInput.setCustomValidity(`Максимальная длина комментария 140 символов. Удалите лишние ${description.length - MAX_DESCRIPTION_LENGTH} симв.`);

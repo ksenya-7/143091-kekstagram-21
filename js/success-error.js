@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const main = document.querySelector(`main`);
 const successTemplate = document
